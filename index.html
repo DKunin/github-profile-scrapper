@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>C</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://npmcdn.com/tachyons@4.6.1/css/tachyons.min.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.0/vue.min.js"></script>
+    <script type="text/javascript" src="./filteredResult.js"></script>
+
+</head>
+<body>
+    <div id="app"></div>
+    <template id="user">
+        <div>
+            <div v-for="user in users">
+                <div class="pa2 cf">
+                    <a :href="user.html_url" class="fl ph2"><img width="50px" :src="user.avatar_url" alt=""></a>
+                    <div>{{user.name}} / {{user.login}}</div>
+                    <div><a :href="'mailto:'+user.email">{{user.email}}</a></div>
+                    <div><a :href="user.blog">{{user.blog}}</a> {{user.bio}}</div>
+                </div>
+            </div>
+        </div>
+    </template>
+</body>
+<script>
+    new Vue({
+        el: '#app',
+        mounted() {
+            console.log(this.users);
+        },
+        template: '#user',
+        data: () => ({
+            users: DATA
+        })
+    });
+
+</script>
+</html>
