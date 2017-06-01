@@ -21,6 +21,7 @@
   "license": "MIT",
   "description": "> This is an example file with default selections.",
   "dependencies": {
-    "superagent": "3.5.2"
+    "superagent": "3.5.2",
+    "x-ray": "2.3.2"
   }
 }
