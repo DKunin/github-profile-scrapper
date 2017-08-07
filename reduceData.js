@@ -14,6 +14,16 @@ function getUser(login) {
     });
 }
 
+function getLastActionInfo(originalObject) {
+    return new Promise(resolve => {
+        request(`https://api.github.com/users/${originalObject.login}/events`)
+            .auth('dkunin', process.env.GITHUB_PERS_TOKEN)
+            .end((err, result) => {
+                resolve(Object.assign(originalObject, { lastActivity: result.body[0] }));
+            });
+    });
+}
+
 Promise.all(dataFile.map(({ login }) => getUser(login)))
     .then(results => {
         const filteredResult = results
@@ -21,5 +31,7 @@ Promise.all(dataFile.map(({ login }) => getUser(login)))
             .filter(singleUser => {
                 return singleUser.email && singleUser.hireable;
             });
-        fs.writeFileSync('./filteredResult.json', JSON.stringify(filteredResult, null, 4));
+        Promise.all(filteredResult.map(getLastActionInfo)).then(narrowedResults => {
+            fs.writeFileSync('./filteredResult.json', JSON.stringify(narrowedResults, null, 4));
+        });
     });

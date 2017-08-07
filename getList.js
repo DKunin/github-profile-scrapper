@@ -4,7 +4,7 @@ const request = require('superagent');
 const fs = require('fs');
 
 function getUrl(page) {
-    return `https://api.github.com/search/users?page=${page}&l=C&q=language%3AC+location%3AMoscow`;
+    return `https://api.github.com/search/users?page=${page}&q=language%3AJava+location%3AMoscow`;
 }
 
 function requestPage(page) {
@@ -21,7 +21,7 @@ function requestPage(page) {
 let resultingList = [];
 let allPromises = [];
 
-for (var i = 1; i < 20; i++) {
+for (var i = 1; i < 30; i++) {
     allPromises.push(requestPage(i));
 }
 

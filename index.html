@@ -2,23 +2,44 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>C</title>
+    <title>JAVA</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/tachyons@4.6.1/css/tachyons.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.0/vue.min.js"></script>
-    <script type="text/javascript" src="./stackoverflow-data.js"></script>
-
+    <script type="text/javascript" src="./filteredResult-data.js"></script>
+    <style>
+        .info-holder {
+            display: flex;
+            padding: 10px 15px;
+        }
+        .image, .info {
+            display: inline-block;
+        }
+        .image {
+            width: 70px;
+        }
+    </style>
 </head>
 <body>
     <div id="app"></div>
     <template id="user">
         <div>
-            <div v-for="user in users">
-                <div class="pa2 cf">
-                    <a :href="user.html_url" class="fl ph2"><img width="50px" :src="user.avatar_url" alt=""></a>
-                    <div>{{user.name}} / {{user.login}}</div>
-                    <div><a :href="'mailto:'+user.email">{{user.email}}</a></div>
-                    <div><a :href="user.blog">{{user.blog}}</a> {{user.bio}}</div>
+            <div v-for="user in sorted">
+                <div class="info-holder">
+                    <div class="image">
+                        <a target="_blank" :href="user.html_url" class="ph2">
+                            <img width="50px" :src="user.avatar_url" alt="">
+                        </a>
+                    </div>
+                    <div class="info">
+                        <div>{{user.name}} / {{user.login}}</div>
+                        <div><a :href="'mailto:'+user.email">{{user.email}}</a></div>
+                        <div><a target="_blank" :href="user.blog">{{user.blog}}</a> {{user.bio}}</div>
+                        <div>Repos: {{user.public_repos}}</div>
+                        <div>Followers: {{user.followers}}</div>
+                        <div v-if="user.bio">Bio: {{user.bio}}</div>
+                        <div v-if="user.bio">Last activity: {{checkActivity(user.lastActivity)}}</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -38,13 +59,31 @@
     new Vue({
         el: '#app',
         mounted() {
-            console.log(this.users);
+            console.log(this.users.length, this.sorted.length);
         },
-        template: '#user-short',
+        methods: {
+            checkActivity(item) {
+                if (!item) {
+                    return '';
+                }
+                return new Date(item.created_at).toLocaleString();
+            }
+        },
+        template: '#user',
         data: () => ({
             users: DATA
-        })
+        }),
+        computed: {
+            sorted() {
+                return this.users
+                    .sort((a, b) => {
+                        return b.public_repos - a.public_repos;
+                    })
+                    .filter(({ lastActivity }) =>lastActivity)
+                    .filter(({ public_repos }) => public_repos >= 10)
+                    .filter(({ followers }) => followers >= 5)
+            }
+        }
     });
-
 </script>
 </html>
