@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JAVA</title>
+    <title>Javascript: Piter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel="stylesheet" href="https://npmcdn.com/tachyons@4.6.1/css/tachyons.min.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.3.0/vue.min.js"></script>
@@ -21,6 +21,7 @@
     </style>
 </head>
 <body>
+    <h2>Yaroslavl</h2>
     <div id="app"></div>
     <template id="user">
         <div>
@@ -76,12 +77,12 @@
         computed: {
             sorted() {
                 return this.users
-                    .sort((a, b) => {
-                        return b.public_repos - a.public_repos;
-                    })
-                    .filter(({ lastActivity }) =>lastActivity)
-                    .filter(({ public_repos }) => public_repos >= 10)
-                    .filter(({ followers }) => followers >= 5)
+                    // .sort((a, b) => {
+                    //     return b.public_repos - a.public_repos;
+                    // })
+                    // .filter(({ lastActivity }) => lastActivity)
+                    // .filter(({ public_repos }) => public_repos >= 5)
+                    // .filter(({ followers }) => followers >= 0)
             }
         }
     });

@@ -4,7 +4,7 @@ const request = require('superagent');
 const fs = require('fs');
 
 function getUrl(page) {
-    return `https://api.github.com/search/users?page=${page}&q=language:javascript+location:moscow`;
+    return `https://api.github.com/search/users?page=${page}&q=language:javascript+location:${escape('rostov-na-donu')}`;
 }
 
 function requestPage(page) {
@@ -13,11 +13,11 @@ function requestPage(page) {
             .get(getUrl(page))
             .auth('dkunin', process.env.GITHUB_PERS_TOKEN)
             .end((err, result) => {
-                console.log(result.body.items);
                 if (result.body.items) {
                     resolve(result.body.items);
+                } else {
+                    resolve([]);
                 }
-                    
             });
     });
 }
@@ -25,7 +25,7 @@ function requestPage(page) {
 let resultingList = [];
 let allPromises = [];
 
-for (var i = 1; i < 30; i++) {
+for (var i = 1; i < 50; i++) {
     allPromises.push(requestPage(i));
 }
 
