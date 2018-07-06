@@ -14,7 +14,8 @@
     "test": "echo test",
     "start": "electron .",
     "dev": "node ./",
-    "build": "NODE_ENV=production node ./"
+    "build": "NODE_ENV=production node ./",
+    "build:electron": "rm -rf ./build/*darwin*; electron-packager . GithubParseHelper --out=./build --platform=darwin --arch=x64 --icon=./static/icon.icns --overwrite"
   },
   "homepage": "https://github.com/dkunin/github-profile-scrapper",
   "keywords": [],
@@ -24,5 +25,8 @@
     "electron": "2.0.4",
     "superagent": "3.5.2",
     "x-ray": "2.3.2"
+  },
+  "devDependencies": {
+    "electron-packager": "12.1.0"
   }
 }
