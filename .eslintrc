@@ -147,7 +147,9 @@
             }
         ]
     },
-    "globals": {},
+    "globals": {
+        "Vue": true
+    },
     "env": {
         "browser": true,
         "es6": true,
