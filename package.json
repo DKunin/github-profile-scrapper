@@ -15,7 +15,8 @@
     "start": "electron .",
     "dev": "node ./",
     "build": "NODE_ENV=production node ./",
-    "build:electron": "rm -rf ./build/*darwin*; electron-packager . GithubParseHelper --out=./build --platform=darwin --arch=x64 --icon=./static/icon.icns --overwrite"
+    "build:electron:osx": "rm -rf ./build/*darwin*; NODE_ENV=production electron-packager . GithubParseHelper --out=./build --platform=darwin --arch=x64 --icon=./static/icon.icns --overwrite",
+    "build:electron:win": "rm -rf ./build/*darwin*; NODE_ENV=production electron-packager . GithubParseHelper --out=./build --platform=win --icon=./static/icon.png --overwrite"
   },
   "homepage": "https://github.com/dkunin/github-profile-scrapper",
   "keywords": [],
