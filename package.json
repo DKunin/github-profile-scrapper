@@ -16,14 +16,17 @@
     "dev": "node ./",
     "build": "NODE_ENV=production node ./",
     "build:electron:osx": "rm -rf ./build/*darwin*; NODE_ENV=production electron-packager . GithubParseHelper --out=./build --platform=darwin --arch=x64 --icon=./static/icon.icns --overwrite",
-    "build:electron:win": "rm -rf ./build/*darwin*; NODE_ENV=production electron-packager . GithubParseHelper --out=./build --platform=win --icon=./static/icon.png --overwrite"
+    "build:electron:win": "rm -rf ./build/*win32*; NODE_ENV=production electron-packager . GithubParseHelper --out=./build --platform=win32 --overwrite",
+    "package": "create-dmg 'build/GithubParseHelper-darwin-x64/GithubParseHelper.app' && mv ./*.dmg ./build"
   },
   "homepage": "https://github.com/dkunin/github-profile-scrapper",
   "keywords": [],
   "license": "MIT",
   "description": "> This is an example file with default selections.",
   "dependencies": {
+    "create-dmg": "3.1.0",
     "electron": "2.0.4",
+    "memory-cache": "0.2.0",
     "superagent": "3.5.2",
     "x-ray": "2.3.2"
   },

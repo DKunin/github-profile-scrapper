@@ -1,16 +1,20 @@
 'use strict';
 
 const superAgent = require('superagent');
+const cache = require('memory-cache');
+const TEN_MINUTES = 600000;
 
-function getUrl(page, request) {
-    return `https://api.github.com/search/users?page=${page}${request}`;
+const USER_TOKEN = process.env.GITHUB_PERS_TOKEN;
+
+function getUrl(request) {
+    return `https://api.github.com/search/users${request}`;
 }
 
-function requestPage(page, request) {
+function requestPage(request) {
     return new Promise(resolve => {
         superAgent
-            .get(getUrl(page, request))
-            .auth('dkunin', process.env.GITHUB_PERS_TOKEN)
+            .get(getUrl(request))
+            .auth('dkunin', USER_TOKEN)
             .end((err, result) => {
                 if (result.body.items) {
                     resolve(result.body.items);
@@ -24,7 +28,7 @@ function requestPage(page, request) {
 function getUser(login) {
     return new Promise(resolve => {
         superAgent(`https://api.github.com/users/${login}`)
-            .auth('dkunin', process.env.GITHUB_PERS_TOKEN)
+            .auth('dkunin', USER_TOKEN)
             .end((err, result) => {
                 resolve(result.body);
             });
@@ -36,7 +40,7 @@ function getLastActionInfo(originalObject) {
         superAgent(
             `https://api.github.com/users/${originalObject.login}/events`
         )
-            .auth('dkunin', process.env.GITHUB_PERS_TOKEN)
+            .auth('dkunin', USER_TOKEN)
             .end((err, result) => {
                 if (err) {
                     return reject(err);
@@ -52,27 +56,25 @@ function getLastActionInfo(originalObject) {
 
 function processData(data) {
     return new Promise((resolve, reject) => {
-        Promise.all(data.map(({ login }) => getUser(login))).then(results => {
-            const filteredResult = results
-                .filter(Boolean)
-                .filter(singleUser => {
-                    return singleUser.email || singleUser.html_url;
-                });
-            Promise.all(filteredResult.map(getLastActionInfo)).then(resolve);
-        }).catch(reject);
+        Promise.all(data.map(({ login }) => getUser(login)))
+            .then(results => {
+                const filteredResult = results
+                    .filter(Boolean)
+                    .filter(singleUser => {
+                        return singleUser.email || singleUser.html_url;
+                    });
+                Promise.all(filteredResult.map(getLastActionInfo)).then(
+                    resolve
+                );
+            })
+            .catch(reject);
     });
 }
 
 function performSearch(request) {
     let resultingList = [];
-    let allPromises = [];
-
-    for (var i = 1; i < 2; i++) {
-        allPromises.push(requestPage(i, request));
-    }
-
     return new Promise((resolve, reject) => {
-        Promise.all(allPromises)
+        requestPage(request)
             .then(allResults => {
                 resultingList = allResults.reduce((newArray, singleItem) => {
                     return newArray.concat(singleItem);
@@ -84,5 +86,13 @@ function performSearch(request) {
 }
 
 module.exports = function(query) {
-    return performSearch(query).then(processData);
+    const cachedResult = cache.get(query);
+    if (cachedResult) {
+        return cachedResult;
+    }
+    return performSearch(query).then(result => {
+        const processedData = processData(result);
+        cache.put(query, processedData, TEN_MINUTES);
+        return processedData;
+    });
 };

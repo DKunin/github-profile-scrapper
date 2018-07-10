@@ -5,6 +5,14 @@ new Vue({
     el: '#app',
     mounted() {},
     methods: {
+        nextPage() {
+            this.page = this.page + 1;
+            this.updateUsers();
+        },
+        prevPage() {
+            this.page = this.page - 1;
+            this.updateUsers();
+        },
         checkActivity(item) {
             if (!item) {
                 return '';
@@ -14,11 +22,15 @@ new Vue({
         updateUsers() {
             this.loadingStatus = 'Загрузка...';
             this.users = [];
-            getList(
-                `&q=language:${escape(this.language)}+location:${escape(
-                    this.location
-                )}`
-            ).then(result => {
+            const mainQuery = `q=language:${escape(
+                this.language
+            )}+location:${escape(this.location)}`;
+            if (mainQuery !== this.prevQuery) {
+                this.page = 1;
+            }
+
+            this.prevQuery = mainQuery;
+            getList(`?page=${this.page}&${mainQuery}`).then(result => {
                 this.users = result;
                 this.loadingStatus = result.length ? 'Загружено' : 'Нет данных';
             });
@@ -28,6 +40,7 @@ new Vue({
     data: function() {
         return {
             users: DATA,
+            page: 1,
             location: null,
             language: null,
             loadingStatus: 'Нет данных'

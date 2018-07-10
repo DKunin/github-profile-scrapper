@@ -1,10 +1,22 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, shell } = require('electron');
 let mainWindow;
+
+const handleRedirect = (e, url) => {
+    console.log(e, url);
+    if (url !== e.sender.getURL()) {
+        e.preventDefault();
+        shell.openExternal(url);
+    }
+};
 
 function createWindow() {
     mainWindow = new BrowserWindow({ width: 1025, height: 600 });
     mainWindow.loadFile('index.html');
-    // mainWindow.webContents.openDevTools();.
+
+    // mainWindow.webContents.openDevTools();
+
+    mainWindow.webContents.on('will-navigate', handleRedirect);
+
     mainWindow.on('closed', function() {
         mainWindow = null;
     });

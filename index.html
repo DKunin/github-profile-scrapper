@@ -46,14 +46,14 @@
                         <div v-for="user in sorted" class="row">
                             <div class="info-holder">
                                 <div class="image">
-                                    <a target="_blank" :href="user.html_url">
+                                    <a :href="user.html_url">
                                         <img width="50px" :src="user.avatar_url" alt="">
                                     </a>
                                 </div>
                                 <div class="info">
                                     <div>{{user.name}} / {{user.login}}</div>
                                     <div><a :href="'mailto:'+user.email">{{user.email}}</a></div>
-                                    <div><a target="_blank" :href="user.blog">{{user.blog}}</a> {{user.bio}}</div>
+                                    <div><a :href="user.blog">{{user.blog}}</a> {{user.bio}}</div>
                                     <div>Repos: {{user.public_repos}}</div>
                                     <div>Followers: {{user.followers}}</div>
                                     <div v-if="user.bio">Bio: {{user.bio}}</div>
@@ -63,6 +63,17 @@
                         </div>
                     </div>
             </div>
+            <div class="row">
+                <div class="column">
+                    <button @click="prevPage" :disabled="!sorted.length || page === 1">Предидущая страница</button>
+                </div>
+                <div class="column">
+                    Страница: {{ page }}
+                </div>
+                <div class="column">
+                    <button @click="nextPage" :disabled="!sorted.length">Следующая страница</button>
+                </div>
+            </div>
         </div>
     </template>
     <template id="user-short">
@@ -70,7 +81,7 @@
             <div v-for="user in users">
                 <div class="pa2 cf">
                     <div>{{user.title}} / {{user.login}}</div>
-                    <div><a target="_blank" :href="user.href">{{user.href}}</a></div>
+                    <div><a :href="user.href">{{user.href}}</a></div>
                 </div>
             </div>
         </div>
