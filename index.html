@@ -23,12 +23,19 @@
         body {
             padding: 20px;
         }
+        .version {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 8px;
+        }
     </style>
 </head>
 <body>
     <div id="app"></div>
     <template id="user">
         <div class="container">
+            <div class="version">{{ version }}</div>
             <form v-on:submit.prevent="updateUsers" class="row">
                 <div class="column">
                     <input type="text" v-model="location" placeholder="location" />
@@ -38,6 +45,9 @@
                 </div>
                 <div class="column">
                     <button>Поиск</button>
+                </div>
+                <div class="column">
+                    Найдено записей: {{ totalCount }}
                 </div>
             </form>
             <div class="row">

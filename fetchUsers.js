@@ -16,7 +16,7 @@ function requestPage(page) {
             .auth('dkunin', process.env.GITHUB_PERS_TOKEN)
             .end((err, result) => {
                 if (result.body.items) {
-                    resolve(result.body.items);
+                    resolve(result.body);
                 } else {
                     resolve([]);
                 }
@@ -27,13 +27,14 @@ function requestPage(page) {
 let resultingList = [];
 let allPromises = [];
 
-for (var i = 1; i < 50; i++) {
+for (var i = 1; i < 2; i++) {
     allPromises.push(requestPage(i));
 }
 
 Promise.all(allPromises).then(allResults => {
+    console.log(JSON.stringify(allResults, null, 4))
     resultingList = allResults.reduce((newArray, singleItem) => {
-        return newArray.concat(singleItem);
+        return newArray.concat(singleItem.items);
     }, []);
-    fs.writeFileSync('./data.json', JSON.stringify(resultingList, null, 4));
+    // fs.writeFileSync('./data.json', JSON.stringify(resultingList, null, 4));
 });

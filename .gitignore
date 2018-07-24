@@ -1,3 +1,4 @@
+./*.dmg
 build
 node_modules
 data.json

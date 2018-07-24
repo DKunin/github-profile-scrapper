@@ -1,5 +1,6 @@
 const DATA = [];
 const getList = require('./getList');
+const package = require('./package.json');
 
 new Vue({
     el: '#app',
@@ -21,17 +22,26 @@ new Vue({
         },
         updateUsers() {
             this.loadingStatus = 'Загрузка...';
+            this.totalCount = 0;
             this.users = [];
-            const mainQuery = `q=language:${escape(
-                this.language
-            )}+location:${escape(this.location)}`;
+            let mainQuery = 'q=';
+            if (this.language) {
+                mainQuery = mainQuery + `language:${escape(this.language)}`;
+            }
+            if (this.language && this.location) {
+                mainQuery = mainQuery + `+location:${escape(this.location)}`;
+            } else if (!this.language && this.location) {
+                mainQuery = mainQuery + `location:${escape(this.location)}`;
+            }
+
             if (mainQuery !== this.prevQuery) {
                 this.page = 1;
             }
 
             this.prevQuery = mainQuery;
             getList(`?page=${this.page}&${mainQuery}`).then(result => {
-                this.users = result;
+                this.totalCount = result.total_count;
+                this.users = result.list;
                 this.loadingStatus = result.length ? 'Загружено' : 'Нет данных';
             });
         }
@@ -39,6 +49,8 @@ new Vue({
     template: '#user',
     data: function() {
         return {
+            version: package.version,
+            totalCount: 0,
             users: DATA,
             page: 1,
             location: null,

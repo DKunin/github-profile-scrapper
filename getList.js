@@ -16,8 +16,8 @@ function requestPage(request) {
             .get(getUrl(request))
             .auth('dkunin', USER_TOKEN)
             .end((err, result) => {
-                if (result.body.items) {
-                    resolve(result.body.items);
+                if (result.body) {
+                    resolve(result.body);
                 } else {
                     resolve([]);
                 }
@@ -76,10 +76,10 @@ function performSearch(request) {
     return new Promise((resolve, reject) => {
         requestPage(request)
             .then(allResults => {
-                resultingList = allResults.reduce((newArray, singleItem) => {
+                resultingList = allResults.items.reduce((newArray, singleItem) => {
                     return newArray.concat(singleItem);
                 }, []);
-                resolve(resultingList);
+                resolve({ total_count: allResults.total_count, list: resultingList });
             })
             .catch(reject);
     });
@@ -90,8 +90,9 @@ module.exports = function(query) {
     if (cachedResult) {
         return cachedResult;
     }
-    return performSearch(query).then(result => {
-        const processedData = processData(result);
+    return performSearch(query).then(async function(result) {
+        const list = await processData(result.list);
+        const processedData = { list, total_count: result.total_count };
         cache.put(query, processedData, TEN_MINUTES);
         return processedData;
     });
